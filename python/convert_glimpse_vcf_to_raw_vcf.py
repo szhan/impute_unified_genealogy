@@ -5,8 +5,8 @@ import cyvcf2
 
 
 @click.command()
-@click.option('--in_file', required=True, help="Input BCF file")
-@click.option('--out_file', required=True, help="Output compressed BCF file")
+@click.option('--in_file', '-i', required=True, help="Input BCF file")
+@click.option('--out_file', '-o', required=True, help="Output compressed BCF file")
 @click.option('--verbose', default=False, help="Print extra information about the variants")
 def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     """
