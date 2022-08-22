@@ -17,7 +17,7 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     The following numbers are denoted as:
     0 = REF
     1 = ALT
-    2 = UNKNOWN
+    -1 = UNKNOWN
 
     Per-sample genotypes are assigned UNKNOWN if at least one condition is met:
     1) Non-SNP;
@@ -31,13 +31,14 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     """
     REF_GENOTYPE = (0, False,)
     ALT_GENOTYPE = (1, False,)
-    UNK_GENOTYPE = (2, False,)  # Unknown (strict_gt=True scheme)
+    UNK_GENOTYPE = (-1, False,)
 
     num_sites = 0  # Total number of variable sites
     num_snps = 0
     num_indels = 0
     num_svs = 0
 
+    # The strict_gt setting affects v.gt_types but not v.genotypes.
     # default:
     #   0=HOM_REF, 1=HET, 2=HOM_ALT, 3=UNKNOWN
     # strict_gt=True:
