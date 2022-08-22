@@ -53,7 +53,15 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     w = cyvcf2.Writer(out_file, tmpl=vcf, mode="wb")
     w.write_header()
 
+    pos = 0
     for v in vcf:
+        # Check for duplicate positions. Keep the first encountered.
+        if pos == v.POS:
+            print(f"WARN: Duplicate positions for variant at position {pos}.")
+            continue
+        else:
+            pos = v.POS
+
         num_sites += 1
         num_snps = num_snps + 1 if v.is_snp else num_snps
         num_indels = num_indels + 1 if v.is_indel else num_indels
