@@ -10,9 +10,9 @@ import cyvcf2
 @click.option('--verbose', default=False, help="Print extra information about the variants")
 def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     """
-    Obtain BCF with missing genotypes from a GLIMPSE imputed BCF file.
+    Obtain VCF/BCF with missing genotypes from a GLIMPSE imputed VCF/BCF file.
     Since sequencing coverage in ancient WGS data is often too low for phasing,
-    the genotypes in the rebuilt BCF are all represented as haploid.
+    the genotypes in the rebuilt VCF/BCF are all represented as haploid.
 
     The following numbers are denoted as:
     0 = REF
@@ -58,7 +58,8 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
     for v in vcf:
         # Check for duplicate positions. Keep the first encountered.
         if pos == v.POS:
-            print(f"WARN: Duplicate positions for variant at position {pos}.")
+            if verbose:
+                print(f"WARN: Duplicate positions for variant at position {pos}.")
             continue
         else:
             pos = v.POS
