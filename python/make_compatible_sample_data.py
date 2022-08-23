@@ -22,7 +22,7 @@ def make_compatible_sample_data(sample_data, ancestors_ts):
     """
     ts_site_pos = ancestors_ts.sites_position
     sd_site_pos = sample_data.sites_position[:]
-    all_site_pos = sorted(ts_site_pos.union(sd_site_pos))
+    all_site_pos = sorted(set(ts_site_pos).union(set(sd_site_pos)))
 
     with tsinfer.SampleData(sequence_length=ancestors_ts.sequence_length) as new_sd:
         for pos in all_site_pos:
