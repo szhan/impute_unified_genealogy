@@ -24,7 +24,7 @@ def add_haploid_individuals(vcf, sample_data):
         )
 
 
-def add_haploid_sites(vcf, sample_data):
+def add_haploid_sites(vcf, sample_data, verbose):
     """
     Read the sites in the VCF and add them to the SampleData object,
     reordering the alleles to put the ancestral allele first, if it is available.
@@ -38,7 +38,8 @@ def add_haploid_sites(vcf, sample_data):
     for v in vcf:
         # Check for duplicate positions. Keep the first encountered.
         if pos == v.POS:
-            print(f"WARN: Duplicate positions for variant at position {pos}.")
+            if verbose:
+                print(f"WARN: Duplicate positions for variant at position {pos}.")
             continue
         else:
             pos = v.POS
@@ -66,7 +67,8 @@ def add_haploid_sites(vcf, sample_data):
 @click.command()
 @click.option('--in_file', '-i', required=True, help="Input VCF file")
 @click.option('--out_file', '-o', required=True, help="Output samples file")
-def create_sample_data_from_vcf(in_file, out_file):
+@click.option('--verbose', default=False, help="Print information about duplicate sites")
+def create_sample_data_from_vcf(in_file, out_file, verbose):
     """
     Convert a VCF file into a SampleData object,
     and write it to a samples file for input to tsinfer.
@@ -77,7 +79,7 @@ def create_sample_data_from_vcf(in_file, out_file):
         path=out_file
     ) as sample_data:
         add_haploid_individuals(vcf, sample_data)
-        add_haploid_sites(vcf, sample_data)
+        add_haploid_sites(vcf, sample_data, verbose)
 
     return(sample_data)
 
