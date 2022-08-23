@@ -64,10 +64,6 @@ def add_haploid_sites(vcf, sample_data, verbose):
         sample_data.add_site(pos, genotypes=new_genotypes, alleles=new_alleles)
 
 
-@click.command()
-@click.option('--in_file', '-i', required=True, help="Input VCF file")
-@click.option('--out_file', '-o', required=True, help="Output samples file")
-@click.option('--verbose', default=False, help="Print information about duplicate sites")
 def create_sample_data_from_vcf(in_file, out_file, verbose):
     """
     Convert a VCF file into a SampleData object,
@@ -82,7 +78,3 @@ def create_sample_data_from_vcf(in_file, out_file, verbose):
         add_haploid_sites(vcf, sample_data, verbose)
 
     return(sample_data)
-
-
-if __name__ == "__main__":
-    create_sample_data_from_vcf()
