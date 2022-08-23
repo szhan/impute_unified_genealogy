@@ -50,6 +50,8 @@ def add_haploid_sites(vcf, sample_data, max_right_position, verbose):
             if pos > max_right_position:
                 continue
 
+        assert len(v.ALT) == 1, f"ERROR: Site at {v.POS} is not biallelic."
+
         ancestral = v.INFO.get("AA", v.REF)
 
         old_alleles = [v.REF] + v.ALT
