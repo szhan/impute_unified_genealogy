@@ -7,7 +7,15 @@ import cyvcf2
 
 def add_haploid_individuals(vcf, sample_data):
     """
+    Add individuals named in cyvcf2.VCF object to a SampleData object,
+    including indiividual names in the metadata field.
+
+    This only processes variable sites from haploid individuals.
+
     TODO: Parse anno file.
+
+    :param cyvcf2.VCF vcf:
+    :param tsinfer.SampleData sample_data:
     """
     for name in vcf.samples:
         sample_data.add_individual(
@@ -20,6 +28,11 @@ def add_haploid_sites(vcf, sample_data):
     """
     Read the sites in the VCF and add them to the SampleData object,
     reordering the alleles to put the ancestral allele first, if it is available.
+
+    This only processes variable sites from haploid individuals.
+
+    :param cyvcf2.VCF vcf:
+    :param tsinfer.SampleData sample_data:
     """
     pos = 0
     for v in vcf:
@@ -51,11 +64,11 @@ def add_haploid_sites(vcf, sample_data):
 
 
 @click.command()
-@click.option('--in_file', '-i', required=True, help="Input VCF/BCF file")
+@click.option('--in_file', '-i', required=True, help="Input VCF file")
 @click.option('--out_file', '-o', required=True, help="Output samples file")
 def create_sample_data_from_vcf(in_file, out_file):
     """
-    Convert a VCF/BCF file into a SampleData object,
+    Convert a VCF file into a SampleData object,
     and write it to a samples file for input to tsinfer.
     """
     vcf = cyvcf2.VCF(in_file, strict_gt=True)
