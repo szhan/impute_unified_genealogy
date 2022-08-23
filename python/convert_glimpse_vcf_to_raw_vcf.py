@@ -21,9 +21,10 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
 
     Per-sample genotypes are assigned UNKNOWN if at least one condition is met:
     1) Non-SNP;
-    2) Total depth is 0;
-    3) Total depth is -1; and
-    4) Ref. depth is equal to alt. depth (ambiguous read support).
+    2) Multiallelic site;
+    3) Total depth is 0;
+    4) Total depth is -1; and
+    5) Ref. depth is equal to alt. depth (ambiguous read support).
 
     :param str in_file: Input BCF file
     :param str out_file: Output BCF file
@@ -35,6 +36,7 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
 
     num_sites = 0  # Total number of variable sites
     num_snps = 0
+    num_biallelic_snps = 0
     num_indels = 0
     num_svs = 0
 
@@ -91,6 +93,13 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
             if verbose:
                 print(" ".join(str(x) for x in [
                       "Non-SNP", ":", v.CHROM, v.POS, v.num_unknown, v.num_het]))
+            v.genotypes = [UNK_GENOTYPE] * num_samples
+            v.genotypes = v.genotypes
+            w.write_record(v)
+            continue
+
+        # If it is a multiallelic site, then assign UNKNOWN.
+        if len(v.ALT) > 1:
             v.genotypes = [UNK_GENOTYPE] * num_samples
             v.genotypes = v.genotypes
             w.write_record(v)
