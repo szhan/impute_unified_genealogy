@@ -36,7 +36,6 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
 
     num_sites = 0  # Total number of variable sites
     num_snps = 0
-    num_biallelic_snps = 0
     num_indels = 0
     num_svs = 0
 
@@ -87,28 +86,19 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
         v.set_format("HS", np.full(num_samples, '.', dtype=np.bytes_))
         v.set_format("PL", np.full(num_samples, '.', dtype=np.bytes_))
 
-        # If it is not a SNP, then assign UNKNOWN.
-        # TODO: Is this appropriate?
-        if not v.is_snp:
+        # Assign UNKNOWN if:
+        # 1) Not a SNP
+        #   TODO: Is this appropriate?
+        # 2) Multiallelic site
+        # 3) The depths of all the samples in a site are 0 or -1
+        #   TODO: Ask Ali why total depth can be either 0 or -1,
+        #   i.e. both ref. depth and alt. depth are either 0 or -1.
+        if not v.is_snp or\
+            len(v.ALT) > 1 or \
+            np.all(TOT_DP == 0) or np.all(TOT_DP) == -1:
             if verbose:
                 print(" ".join(str(x) for x in [
-                      "Non-SNP", ":", v.CHROM, v.POS, v.num_unknown, v.num_het]))
-            v.genotypes = [UNK_GENOTYPE] * num_samples
-            v.genotypes = v.genotypes
-            w.write_record(v)
-            continue
-
-        # If it is a multiallelic site, then assign UNKNOWN.
-        if len(v.ALT) > 1:
-            v.genotypes = [UNK_GENOTYPE] * num_samples
-            v.genotypes = v.genotypes
-            w.write_record(v)
-            continue
-
-        # If the depths of all the samples in a site are 0 or -1, then assign UNKNOWN.
-        # TODO: Ask Ali why total depth can be either 0 or -1,
-        #       i.e. both ref. depth and alt. depth are either 0 or -1.
-        if np.all(TOT_DP == 0) or np.all(TOT_DP) == -1:
+                      "FILTER", ":", v.CHROM, v.POS, v.num_unknown, v.num_het]))
             v.genotypes = [UNK_GENOTYPE] * num_samples
             v.genotypes = v.genotypes
             w.write_record(v)
@@ -119,11 +109,6 @@ def convert_glimpse_vcf_to_raw_vcf(in_file, out_file, verbose):
         # Otherwise, assign UNKNOWN.
         is_refdp_gt_altdp = REF_DP > ALT_DP
         is_refdp_lt_altdp = REF_DP < ALT_DP
-        is_refdp_et_altdp = REF_DP == ALT_DP
-
-        is_totdp_zero = TOT_DP == 0
-        is_totdp_negative_one = TOT_DP == -1
-        is_unknown = is_refdp_et_altdp | is_totdp_zero | is_totdp_negative_one
 
         for i in np.arange(num_samples):
             if is_refdp_gt_altdp[i]:
