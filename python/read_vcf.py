@@ -64,7 +64,7 @@ def add_haploid_sites(vcf, sample_data, verbose):
         sample_data.add_site(pos, genotypes=new_genotypes, alleles=new_alleles)
 
 
-def create_sample_data_from_vcf(in_file, out_file, verbose):
+def create_sample_data_from_vcf(in_file, out_file, verbose=False):
     """
     Convert a VCF file into a SampleData object,
     and write it to a samples file for input to tsinfer.
