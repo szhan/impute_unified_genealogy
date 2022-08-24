@@ -53,7 +53,7 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     start_dt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     out_samples_file = out_dir + "/" + out_prefix + ".samples"
-    out_bcf_file = out_dir + "/" + out_prefix + ".bcf"
+    out_vcf_file = out_dir + "/" + out_prefix + ".vcf.gz"
     out_csc_file = out_dir + "/" + out_prefix + ".csv"
 
     ### Create an ancestor ts from the reference genomes
@@ -94,6 +94,11 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     ### Impute the query genomes
     print(f"INFO: Imputing query genomes")
     ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc)
+
+    ### Write to file in VCF format
+    with gzip.open(out_vcf_file, "wt") as out_f:
+        ts_imputed.write_vcf(out_f)
+
 
 if __name__ == "__main__":
     run_pipeline()
