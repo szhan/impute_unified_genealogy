@@ -26,6 +26,14 @@ def make_compatible_sample_data(sample_data, ancestors_ts):
     all_site_pos = sorted(set(ts_site_pos).union(set(sd_site_pos)))
 
     with tsinfer.SampleData(sequence_length=ancestors_ts.sequence_length) as new_sd:
+        # Add individuals
+        for ind in sample_data.individuals():
+            new_sd.add_individual(
+                ploidy=len(ind.samples),
+                population=ind.population,
+                metadata=ind.metadata
+            )
+
         # Add sites
         for pos in tqdm(all_site_pos):
             if pos in ts_site_pos and pos not in sd_site_pos:
@@ -105,13 +113,5 @@ def make_compatible_sample_data(sample_data, ancestors_ts):
                 )
             else:
                 raise ValueError(f"Position {pos} must be in the tree sequence and/or sample data.")
-
-        # Add individuals
-        for ind in sample_data.individuals():
-            new_sd.add_individual(
-                ploidy=len(ind.samples),
-                population=ind.population,
-                metadata=ind.metadata
-            )
 
     return new_sd
