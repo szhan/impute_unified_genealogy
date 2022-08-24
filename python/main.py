@@ -53,8 +53,10 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     start_dt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
     out_samples_file = out_dir + "/" + out_prefix + ".samples"
-    out_vcf_file = out_dir + "/" + out_prefix + ".vcf.gz"
-    out_csc_file = out_dir + "/" + out_prefix + ".csv"
+    out_ts_imputed_file = out_dir + "/" + out_prefix + ".imputed.trees"
+    out_vcf_imputed_file = out_dir + "/" + out_prefix + ".imputed.vcf.gz"
+    out_csv_file = out_dir + "/" + out_prefix + ".csv"
+    out_log_file = out_dir + "/" + out_prefix + ".log"
 
     ### Create an ancestor ts from the reference genomes
     # Multiallelic sites are automatically removed when generating an ancestor ts.
@@ -94,10 +96,11 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     ### Impute the query genomes
     print(f"INFO: Imputing query genomes")
     ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc)
+    ts_imputed.dump(out_ts_imputed_file)
 
     ### Write to file in VCF format
     print(f"INFO: Writing results to VCF")
-    with gzip.open(out_vcf_file, "wt") as out_f:
+    with gzip.open(out_vcf_imputed_file, "wt") as out_f:
         ts_imputed.write_vcf(out_f)
 
 
