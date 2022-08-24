@@ -51,6 +51,7 @@ import util
 )
 def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     start_dt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    print(f"TIME: START {start_dt}")
 
     out_samples_file = out_dir + "/" + out_prefix + ".samples"
     out_ts_imputed_file = out_dir + "/" + out_prefix + ".imputed.trees"
@@ -102,7 +103,9 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     print(f"INFO: Writing results to VCF")
     with gzip.open(out_vcf_imputed_file, "wt") as out_f:
         ts_imputed.write_vcf(out_f)
-
+    
+    end_dt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    print(f"TIME: END {end_dt}")
 
 if __name__ == "__main__":
     run_pipeline()
