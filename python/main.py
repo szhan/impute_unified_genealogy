@@ -45,11 +45,17 @@ import util
     help="Remove leaves when making an ancestors tree sequence from the input tree sequence"
 )
 @click.option(
+    "--num_cpus",
+    type=int,
+    default=1,
+    help="Number of threads to use when matching samples with tsinfer"
+)
+@click.option(
     "--verbose",
     is_flag=True,
     help="Print out site information after each processing step.",
 )
-def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
+def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose, num_cpus):
     start_dt = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     print(f"TIME: START {start_dt}")
 
@@ -96,7 +102,7 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
 
     ### Impute the query genomes
     print(f"INFO: Imputing query genomes")
-    ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc)
+    ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc, num_threads=num_cpus)
     ts_imputed.dump(out_ts_imputed_file)
 
     ### Write to file in VCF format
