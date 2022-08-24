@@ -96,6 +96,7 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc)
 
     ### Write to file in VCF format
+    print(f"INFO: Writing results to VCF")
     with gzip.open(out_vcf_file, "wt") as out_f:
         ts_imputed.write_vcf(out_f)
 
