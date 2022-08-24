@@ -1,21 +1,17 @@
 import click
 from datetime import datetime
 import gzip
-import json
 import sys
 
 import numpy as np
 
-import msprime
 import tskit
 import tsinfer
-from tsinfer import make_ancestors_ts
 
 sys.path.append("python/")
 import read_vcf
 import make_compatible_sample_data as make_compatible
 import util
-#import measures
 
 
 @click.command()
@@ -98,7 +94,6 @@ def run_pipeline(in_trees, in_bcf, out_dir, out_prefix, remove_leaves, verbose):
     ### Impute the query genomes
     print(f"INFO: Imputing query genomes")
     ts_imputed = tsinfer.match_samples(sample_data=sd_query_pre, ancestors_ts=ts_anc)
-
 
 if __name__ == "__main__":
     run_pipeline()
